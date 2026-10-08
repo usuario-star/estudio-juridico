@@ -1,0 +1,17 @@
+{% extends "casos/base.html" %}
+
+{% block contenido %}
+<h2>Eliminar Cliente</h2>
+
+{% if error %}
+<div class="alert alert-error">{{ error }}</div>
+{% endif %}
+
+<p>¿Está seguro de que desea eliminar al cliente <strong>{{ cliente.nombres }}</strong> ({{ cliente.documento }})?</p>
+
+<form method="post">
+    {% csrf_token %}
+    <button type="submit" class="btn btn-danger">Sí, Eliminar</button>
+    <a href="{% url 'lista_clientes' %}" class="btn btn-default">Cancelar</a>
+</form>
+{% endblock %}

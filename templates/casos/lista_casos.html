@@ -1,0 +1,60 @@
+{% extends "casos/base.html" %}
+
+{% block contenido %}
+<h2>Casos</h2>
+
+<!-- Filtro por estado (4.3: request.GET + cookie) -->
+<form method="get" style="margin-bottom:1rem;">
+    <label for="estado"><strong>Filtrar por estado:</strong></label>
+    <select name="estado" id="estado" onchange="this.form.submit()" style="padding:0.4rem; margin-left:0.5rem; border:1px solid #ccc; border-radius:4px;">
+        <option value="">-- Todos --</option>
+        {% for est in estados %}
+            <option value="{{ est.id }}" {% if estado_seleccionado and estado_seleccionado.id == est.id %}selected{% endif %}>
+                {{ est.nombre }}
+            </option>
+        {% endfor %}
+    </select>
+    {% if estado_seleccionado %}
+        <a href="{% url 'lista_casos' %}" class="btn btn-default" style="margin-left:0.5rem;">Limpiar filtro</a>
+    {% endif %}
+</form>
+
+{% if casos %}
+<table>
+    <thead>
+        <tr>
+            <th>Código</th>
+            <th>Título</th>
+            <th>Cliente</th>
+            <th>Estado</th>
+            <th>Abogados</th>
+            <th>Total Pagado</th>
+            <th>Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for caso in casos %}
+        <tr>
+            <td>{{ caso.codigo }}</td>
+            <td>{{ caso.titulo }}</td>
+            <td>{{ caso.cliente.nombres }}</td>
+            <td>{{ caso.estado.nombre }}</td>
+            <td>
+                {% for abogado in caso.abogados.all %}
+                    {{ abogado.get_full_name|default:abogado.username }}{% if not forloop.last %}, {% endif %}
+                {% empty %}
+                    Sin abogados
+                {% endfor %}
+            </td>
+            <td>S/ {{ caso.total_pagado|floatformat:2 }}</td>
+            <td>
+                <a href="{% url 'detalle_caso' caso.id %}" class="btn btn-primary">Ver Detalle</a>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% else %}
+<div class="alert alert-info">No hay casos registrados.</div>
+{% endif %}
+{% endblock %}

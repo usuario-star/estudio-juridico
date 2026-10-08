@@ -1,0 +1,38 @@
+{% extends "casos/base.html" %}
+
+{% block contenido %}
+<h2>Clientes</h2>
+<p>
+    <a href="{% url 'crear_cliente' %}" class="btn btn-primary">+ Nuevo Cliente</a>
+</p>
+
+{% if clientes %}
+<table>
+    <thead>
+        <tr>
+            <th>Nombres</th>
+            <th>Documento</th>
+            <th>Teléfono</th>
+            <th>Correo</th>
+            <th>Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for c in clientes %}
+        <tr>
+            <td>{{ c.nombres }}</td>
+            <td>{{ c.documento }}</td>
+            <td>{{ c.telefono }}</td>
+            <td>{{ c.correo }}</td>
+            <td>
+                <a href="{% url 'editar_cliente' c.id %}" class="btn btn-primary">Editar</a>
+                <a href="{% url 'eliminar_cliente' c.id %}" class="btn btn-danger">Eliminar</a>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% else %}
+<p>No hay clientes registrados.</p>
+{% endif %}
+{% endblock %}

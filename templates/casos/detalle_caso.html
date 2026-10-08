@@ -1,0 +1,140 @@
+{% extends "casos/base.html" %}
+
+{% block contenido %}
+<h2>{{ caso.codigo }} – {{ caso.titulo }}</h2>
+
+{% if mensaje %}
+<div class="alert alert-success">{{ mensaje }}</div>
+{% endif %}
+{% if error %}
+<div class="alert alert-error">{{ error }}</div>
+{% endif %}
+
+<p><strong>Cliente:</strong> {{ caso.cliente.nombres }} ({{ caso.cliente.documento }})</p>
+<p><strong>Estado:</strong> {{ caso.estado.nombre }}</p>
+<p><strong>Fecha de inicio:</strong> {{ caso.fecha_inicio|date:"d/m/Y" }}</p>
+<p><strong>Descripción:</strong> {{ caso.descripcion|default:"Sin descripción" }}</p>
+
+<p><strong>Abogados asignados:</strong></p>
+<ul>
+    {% for abogado in caso.abogados.all %}
+        <li>{{ abogado.get_full_name|default:abogado.username }}</li>
+    {% empty %}
+        <li>Sin abogados asignados</li>
+    {% endfor %}
+</ul>
+
+<hr>
+
+<h3>Expedientes</h3>
+{% if caso.expedientes.all %}
+<table>
+    <thead>
+        <tr>
+            <th>Número</th>
+            <th>Juzgado</th>
+            <th>Fecha de Presentación</th>
+            <th>Documento</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for exp in caso.expedientes.all %}
+        <tr>
+            <td>{{ exp.numero }}</td>
+            <td>{{ exp.juzgado }}</td>
+            <td>{{ exp.fecha_presentacion|date:"d/m/Y" }}</td>
+            <td>
+                {% if exp.documento %}
+                    <a href="{{ exp.documento.url }}" target="_blank">Ver documento</a>
+                {% else %}
+                    Sin documento
+                {% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% else %}
+<p>No hay expedientes registrados.</p>
+{% endif %}
+
+<!-- 4.2: Subida de documento a expediente -->
+{% if caso.expedientes.all %}
+<div style="background:#f9f9f9; border:1px solid #ddd; padding:1rem; margin:1rem 0; border-radius:4px;">
+    <h4>Subir documento a expediente</h4>
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <input type="hidden" name="accion" value="subir_documento">
+        <p>
+            <label for="expediente_id"><strong>Expediente:</strong></label>
+            <select name="expediente_id" id="expediente_id" required style="padding:0.4rem; border:1px solid #ccc; border-radius:4px;">
+                <option value="">-- Seleccionar --</option>
+                {% for exp in caso.expedientes.all %}
+                    <option value="{{ exp.id }}">{{ exp.numero }} – {{ exp.juzgado }}</option>
+                {% endfor %}
+            </select>
+        </p>
+        <p>
+            <label for="documento"><strong>Archivo:</strong></label>
+            <input type="file" name="documento" id="documento" required>
+        </p>
+        <button type="submit" class="btn btn-primary">Subir Documento</button>
+    </form>
+</div>
+{% endif %}
+
+<h3>Pagos</h3>
+{% if caso.pagos.all %}
+<table>
+    <thead>
+        <tr>
+            <th>Descripción</th>
+            <th>Monto</th>
+            <th>Fecha</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for pago in caso.pagos.all %}
+        <tr>
+            <td>{{ pago.descripcion|default:"—" }}</td>
+            <td>S/ {{ pago.monto|floatformat:2 }}</td>
+            <td>{{ pago.fecha|date:"d/m/Y" }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+<p><strong>Total pagado:</strong> S/ {{ caso.total_pagado|floatformat:2 }}</p>
+{% else %}
+<p>No hay pagos registrados.</p>
+{% endif %}
+
+<!-- 4.1: Formulario de registro de pago -->
+{% if caso.estado.permite_pagos %}
+<div style="background:#f9f9f9; border:1px solid #ddd; padding:1rem; margin:1rem 0; border-radius:4px;">
+    <h4>Registrar nuevo pago</h4>
+    <form method="post">
+        {% csrf_token %}
+        <input type="hidden" name="accion" value="registrar_pago">
+        <p>
+            <label for="monto"><strong>Monto (S/):</strong></label><br>
+            <input type="number" name="monto" id="monto" step="0.01" min="0.01" required
+                   style="width:100%; padding:0.5rem; border:1px solid #ccc; border-radius:4px;">
+        </p>
+        <p>
+            <label for="descripcion"><strong>Descripción:</strong></label><br>
+            <input type="text" name="descripcion" id="descripcion"
+                   style="width:100%; padding:0.5rem; border:1px solid #ccc; border-radius:4px;">
+        </p>
+        <button type="submit" class="btn btn-success">Registrar Pago</button>
+    </form>
+</div>
+{% else %}
+<div class="alert alert-error">
+    Este caso no admite pagos.
+</div>
+{% endif %}
+
+<p style="margin-top:1.5rem;">
+    <a href="{% url 'lista_casos' %}" class="btn btn-default">← Volver a Casos</a>
+</p>
+{% endblock %}

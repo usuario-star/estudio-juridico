@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vargas &amp; Asociados – Gestión de Casos</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f4f6f9; color: #333; }
+        header { background: #1a237e; color: white; padding: 1rem 2rem; }
+        header h1 { font-size: 1.5rem; }
+        nav { background: #283593; padding: 0 2rem; }
+        nav a { color: white; text-decoration: none; padding: 0.75rem 1.5rem; display: inline-block; }
+        nav a:hover { background: #3949ab; }
+        main { max-width: 1100px; margin: 2rem auto; padding: 0 1rem; }
+        footer { background: #1a237e; color: #ccc; text-align: center; padding: 1rem; margin-top: 3rem; font-size: 0.85rem; }
+        .btn { display: inline-block; padding: 0.5rem 1rem; border: none; border-radius: 4px; cursor: pointer; text-decoration: none; font-size: 0.9rem; }
+        .btn-primary { background: #1a237e; color: white; }
+        .btn-danger { background: #c62828; color: white; }
+        .btn-success { background: #2e7d32; color: white; }
+        .btn-default { background: #e0e0e0; color: #333; }
+        .btn:hover { opacity: 0.85; }
+        table { width: 100%; border-collapse: collapse; background: white; box-shadow: 0 1px 4px rgba(0,0,0,0.1); margin: 1rem 0; }
+        th, td { padding: 0.75rem 1rem; text-align: left; border-bottom: 1px solid #e0e0e0; }
+        th { background: #e8eaf6; font-weight: 600; }
+        tr:hover { background: #f5f5f5; }
+        .alert { padding: 1rem; margin: 1rem 0; border-radius: 4px; }
+        .alert-error { background: #ffebee; color: #c62828; border: 1px solid #ef9a9a; }
+        .alert-success { background: #e8f5e9; color: #2e7d32; border: 1px solid #a5d6a7; }
+        .alert-info { background: #e3f2fd; color: #1565c0; border: 1px solid #90caf9; }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Vargas &amp; Asociados – Gestión de Casos</h1>
+    </header>
+    <nav>
+        <a href="{% url 'lista_clientes' %}">Clientes</a>
+        <a href="{% url 'lista_casos' %}">Casos</a>
+    </nav>
+    <main>
+        {% block contenido %}{% endblock %}
+    </main>
+    <footer>
+        &copy; {% now "Y" %} Vargas &amp; Asociados – Todos los derechos reservados.
+    </footer>
+</body>
+</html>
